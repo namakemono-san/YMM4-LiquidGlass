@@ -1,0 +1,19 @@
+<Project>
+  
+  <Target Name="ExcludeHostProvidedFromBuild" AfterTargets="ResolveReferences">
+    <ItemGroup>
+      <ReferenceCopyLocalPaths
+        Remove="@(ReferenceCopyLocalPaths)"
+        Condition="'%(Filename)' == 'Microsoft.Windows.SDK.NET' Or '%(Filename)' == 'WinRT.Runtime'" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="ExcludeHostProvidedFromPublish" AfterTargets="ComputeFilesToPublish">
+    <ItemGroup>
+      <ResolvedFileToPublish
+        Remove="@(ResolvedFileToPublish)"
+        Condition="'%(Filename)' == 'Microsoft.Windows.SDK.NET' Or '%(Filename)' == 'WinRT.Runtime'" />
+    </ItemGroup>
+  </Target>
+
+</Project>

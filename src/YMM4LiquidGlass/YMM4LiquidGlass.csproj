@@ -1,0 +1,71 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+        <UseWPF>true</UseWPF>
+        <RootNamespace>YMM4LiquidGlass</RootNamespace>
+        <AssemblyName>YMM4LiquidGlass</AssemblyName>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <DebugType>none</DebugType>
+        <DebugSymbols>false</DebugSymbols>
+        <GenerateDependencyFile>false</GenerateDependencyFile>
+        <GenerateRuntimeConfigurationFiles>false</GenerateRuntimeConfigurationFiles>
+        <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="Exists('$(YMM4_PATH)\YukkuriMovieMaker.Plugin.dll')">
+        <VorticeDir>$(YMM4_PATH)\</VorticeDir>
+    </PropertyGroup>
+    <PropertyGroup Condition="!Exists('$(YMM4_PATH)\YukkuriMovieMaker.Plugin.dll')">
+        <VorticeDir>$(MSBuildThisFileDirectory)..\..\libs\</VorticeDir>
+    </PropertyGroup>
+
+    <ItemGroup Condition="Exists('$(YMM4_PATH)\YukkuriMovieMaker.Plugin.dll')">
+        <Reference Include="YukkuriMovieMaker.Plugin"
+                   HintPath="$(YMM4_PATH)\YukkuriMovieMaker.Plugin.dll"
+                   Private="false" ExcludeAssets="runtime" />
+        <Reference Include="YukkuriMovieMaker.Controls"
+                   HintPath="$(YMM4_PATH)\YukkuriMovieMaker.Controls.dll"
+                   Private="false" ExcludeAssets="runtime" />
+    </ItemGroup>
+
+    <ItemGroup Condition="!Exists('$(YMM4_PATH)\YukkuriMovieMaker.Plugin.dll')">
+        <Reference Include="YukkuriMovieMaker.Plugin"
+                   HintPath="..\..\libs\YukkuriMovieMaker.Plugin.dll"
+                   Private="false" ExcludeAssets="runtime" />
+        <Reference Include="YukkuriMovieMaker.Controls"
+                   HintPath="..\..\libs\YukkuriMovieMaker.Controls.dll"
+                   Private="false" ExcludeAssets="runtime" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Reference Include="Vortice.Direct2D1" HintPath="$(VorticeDir)Vortice.Direct2D1.dll" Private="false" ExcludeAssets="runtime" />
+        <Reference Include="Vortice.DirectX" HintPath="$(VorticeDir)Vortice.DirectX.dll" Private="false" ExcludeAssets="runtime" />
+        <Reference Include="Vortice.Mathematics" HintPath="$(VorticeDir)Vortice.Mathematics.dll" Private="false" ExcludeAssets="runtime" />
+        <Reference Include="SharpGen.Runtime" HintPath="$(VorticeDir)SharpGen.Runtime.dll" Private="false" ExcludeAssets="runtime" />
+        <Reference Include="SharpGen.Runtime.COM" HintPath="$(VorticeDir)SharpGen.Runtime.COM.dll" Private="false" ExcludeAssets="runtime" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="ComputeSharp.Core" Version="3.2.0" ExcludeAssets="runtime" />
+
+        <PackageReference Include="ComputeSharp.D2D1" Version="3.2.0" />
+    </ItemGroup>
+
+    <Target Name="DeployToYmm4" AfterTargets="Build" Condition="Exists('$(YMM4_PATH)\YukkuriMovieMaker.exe')">
+        <ItemGroup>
+            <DeployFiles Include="$(OutDir)$(AssemblyName).dll" />
+            <DeployFiles Include="$(OutDir)ComputeSharp.D2D1.dll" />
+        </ItemGroup>
+
+        <Copy SourceFiles="@(DeployFiles)"
+              DestinationFolder="$(YMM4_PATH)\user\plugin\$(AssemblyName)"
+              SkipUnchangedFiles="true"
+              ContinueOnError="WarnAndContinue"
+              Retries="0" />
+    </Target>
+
+</Project>

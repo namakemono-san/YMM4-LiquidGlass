@@ -1,0 +1,42 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build_and_release:
+    name: Build and Release
+    runs-on: windows-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Publish
+        run: dotnet publish --configuration Release -o publish
+
+      - name: Copy README to publish folder
+        run: Copy-Item ".github/assets/readme.txt" -Destination "publish/readme.txt"
+
+      - name: Create ZIP
+        run: powershell Compress-Archive -Path "publish\YMM4LiquidGlass.dll", "publish\ComputeSharp.D2D1.dll", "publish\readme.txt" -DestinationPath "publish\YMM4LiquidGlass.zip"
+
+      - name: Rename ZIP to .ymme
+        run: powershell Move-Item publish\YMM4LiquidGlass.zip publish\YMM4LiquidGlass.ymme
+
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ github.ref_name }}
+          body: '`YMM4LiquidGlass.ymme` をクリックしてダウンロードしてください。'
+          artifacts: publish/YMM4LiquidGlass.ymme
