@@ -28,7 +28,7 @@ jobs:
         run: Copy-Item ".github/assets/readme.txt" -Destination "publish/readme.txt"
 
       - name: Create ZIP
-        run: powershell Compress-Archive -Path "publish\YMM4LiquidGlass.dll", "publish\ComputeSharp.D2D1.dll", "publish\readme.txt" -DestinationPath "publish\YMM4LiquidGlass.zip"
+        run: powershell Compress-Archive -Path "publish\YMM4LiquidGlass.dll", "publish\ComputeSharp.D2D1.dll", "publish\ComputeSharp.Core.dll", "publish\readme.txt" -DestinationPath "publish\YMM4LiquidGlass.zip"
 
       - name: Rename ZIP to .ymme
         run: powershell Move-Item publish\YMM4LiquidGlass.zip publish\YMM4LiquidGlass.ymme
